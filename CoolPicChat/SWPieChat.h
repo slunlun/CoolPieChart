@@ -7,6 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+@interface SWPieChatRationLayer : NSObject
+@property(nonatomic, strong) CAShapeLayer *shapeLayer;
+@property(nonatomic, assign) CGFloat centerAngel;
+@property(nonatomic, strong) NSString *indentity;
+@property(nonatomic, strong) NSNumber *ratio;
+@property(nonatomic, strong) NSString *title;
+@property(nonatomic, strong) UIColor *color;
+@end
+
 
 @interface SWPieChat : UIView
 - (void)updateProportions:(NSArray *)proportions placeHolderColor:(NSArray *)placeHolderColors placeHolderTitles:(NSArray *)placeHolderTitles;

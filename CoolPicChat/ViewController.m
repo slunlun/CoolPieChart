@@ -16,10 +16,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    SWPieChat *pieChat = [[SWPieChat alloc] initWithFrame:CGRectMake(50, 20, 200, 200)];
+    SWPieChat *pieChat = [[SWPieChat alloc] initWithFrame:CGRectMake(10, 20, self.view.frame.size.width - 20, self.view.frame.size.height - 40)];
     
-    [pieChat updateProportions:@[@0.6, @0.4] placeHolderColor:@[[UIColor redColor], [UIColor blueColor]] placeHolderTitles:nil];
-   // pieChat.backgroundColor = [UIColor whiteColor];
+    [pieChat updateProportions:@[@0.2, @0.1, @0.7] placeHolderColor:@[[UIColor blueColor], [UIColor yellowColor], [UIColor redColor]] placeHolderTitles:nil];
+    pieChat.backgroundColor = [UIColor blackColor];
+    
+
+    
     [self.view addSubview:pieChat];
 }
 
