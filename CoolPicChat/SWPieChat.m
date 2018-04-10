@@ -35,20 +35,21 @@
     // 绘制圆环背景
     CGFloat sideLength = MIN(self.bounds.size.width, self.bounds.size.height);
     CGRect outRect = CGRectMake(5, 5, sideLength - 5, sideLength - 5);
-    CGRect insideRect = CGRectMake(10, 10, sideLength - 15, sideLength - 15);
     UIBezierPath *path = [UIBezierPath bezierPath];
-    path.usesEvenOddFillRule = YES;
     UIBezierPath *outPath = [UIBezierPath bezierPathWithOvalInRect:outRect];
     [path appendPath:outPath];
-    UIBezierPath *insidePath = [UIBezierPath bezierPathWithOvalInRect:insideRect];
-    [path appendPath:insidePath];
     [[UIColor lightGrayColor] set];
     [path fill];
+    
+    
+    
+    
+    
     
     // 根据proportions填充饼图
     CGFloat startAngle = -M_PI_2;
     CGFloat totalAngel = 2 * M_PI;
-    CGFloat radius = (sideLength - 50)/2;
+    CGFloat radius = (sideLength - 15)/2;
     _radius = radius;
     CGPoint pieCenter = CGPointMake(CGRectGetMidX(outRect), CGRectGetMidY(outRect));
     self.pieCenter = pieCenter;
@@ -85,51 +86,37 @@
         ++index;
     }
 
-    // 添加指示Label
-    UIBezierPath *pointerLayerPath = [[UIBezierPath alloc] init];
+    // 添加总额的圆圈
+    CALayer *countBackgourLayer = [CALayer layer];
+    countBackgourLayer.bounds = CGRectMake(0, 0, 120, 120);
+    countBackgourLayer.cornerRadius = 60;
+    countBackgourLayer.masksToBounds = YES;
+    countBackgourLayer.position = pieCenter;
+    countBackgourLayer.backgroundColor = [UIColor blackColor].CGColor;
+    countBackgourLayer.opacity = 0.2f;
     
-    CGFloat pointerCenterX = self.frame.size.width / 2;
-    CGFloat bottomMargin = 30.0f;
-   // CGFloat sideMargin = 30.0f;
-    CGFloat pointerWidth = 150.f;
-    CGFloat pointerHeight = 60.0f;
-    CGFloat viewHeight = self.frame.size.height;
-   // CGFloat viewWidth = self.frame.size.width;
     
-    CGPoint p1 = CGPointMake(pointerCenterX - pointerWidth / 2, pieCenter.y + radius + 25);
-    CGPoint p2 = CGPointMake(p1.x + 60, p1.y);
-    CGPoint p3 = CGPointMake(pointerCenterX, p1.y - 50);
-    CGPoint p4 = CGPointMake(p2.x + 30, p2.y);
-    CGPoint p5 = CGPointMake(p4.x + 60, p4.y);
-    CGPoint p6 = CGPointMake(p5.x, p5.y + pointerHeight);
-    CGPoint p7 = CGPointMake(p5.x - pointerWidth, p6.y);
-    
-    [pointerLayerPath moveToPoint:p1];
-    [pointerLayerPath addLineToPoint:p2];
-    [pointerLayerPath addLineToPoint:p3];
-    [pointerLayerPath addLineToPoint:p4];
-    [pointerLayerPath addLineToPoint:p5];
-    [pointerLayerPath addLineToPoint:p6];
-    [pointerLayerPath addLineToPoint:p7];
-    [pointerLayerPath closePath];
-    CAShapeLayer *pointerShapLayer = [[CAShapeLayer alloc] init];
-    pointerShapLayer.path = pointerLayerPath.CGPath;
-    pointerShapLayer.fillColor = [UIColor whiteColor].CGColor;
-    pointerShapLayer.opacity = 0.5;
-    [self.layer addSublayer:pointerShapLayer];
-    
- 
-    CAShapeLayer *poLayer = [[CAShapeLayer alloc] init];
-    UIBezierPath *poPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 10, 4, 4)];
-    poLayer.path = poPath.CGPath;
-    poLayer.fillColor = [UIColor orangeColor].CGColor;
-    [self.layer addSublayer:poLayer];
-    
-    CAShapeLayer *poLayer1 = [[CAShapeLayer alloc] init];
+    CATextLayer *countTextLayer = [CATextLayer layer];
+    countTextLayer.bounds = CGRectMake(0, 0, 50, 36);
+    countTextLayer.position = pieCenter;
+    countTextLayer.contentsScale = [UIScreen mainScreen].scale;
+    countTextLayer.string = @"总计\n123.23";
+    countTextLayer.fontSize = 15;
+    countTextLayer.foregroundColor = [UIColor whiteColor].CGColor;
+    countTextLayer.alignmentMode = kCAAlignmentCenter;
+    [self.layer addSublayer:countBackgourLayer];
+    [self.layer addSublayer:countTextLayer];
    
-    poLayer1.path = poPath.CGPath;
-    poLayer1.fillColor = [UIColor greenColor].CGColor;
-    [self.bkLayer addSublayer:poLayer1];
+    
+    // 添加边缘半透明的圆环
+    UIBezierPath *ringPath = [UIBezierPath bezierPathWithArcCenter:pieCenter radius:radius - 4 startAngle:0 endAngle:2 * M_PI clockwise:YES];
+    CAShapeLayer *ringLayer = [CAShapeLayer layer];
+    ringLayer.path = ringPath.CGPath;
+    ringLayer.strokeColor = [UIColor whiteColor].CGColor;
+    ringLayer.fillColor = [UIColor clearColor].CGColor;
+    ringLayer.lineWidth = 8;
+    ringLayer.opacity = 0.2f;
+    [self.layer addSublayer:ringLayer];
     
    // UIPanGestureRecognizer *panCR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAct:)];
    // [self addGestureRecognizer:panCR];

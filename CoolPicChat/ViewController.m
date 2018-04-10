@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "SWPieChat.h"
+#import "SWSpeechBubble.h"
 @interface ViewController ()
 
 @end
@@ -20,10 +21,13 @@
     
     [pieChat updateProportions:@[@0.2, @0.1, @0.7] placeHolderColor:@[[UIColor blueColor], [UIColor yellowColor], [UIColor redColor]] placeHolderTitles:nil];
     pieChat.backgroundColor = [UIColor blackColor];
-    
-
-    
     [self.view addSubview:pieChat];
+    
+    SWSpeechBubble *speechBubble = [[SWSpeechBubble alloc] initWithFrame:CGRectMake(30, 100, self.view.frame.size.width - 60, 60)];
+    speechBubble.speechContentLab.textColor = [UIColor orangeColor];
+    speechBubble.speechContentLab.text = @"30.2%\n定制家具";
+    speechBubble.backgroundColor = [UIColor whiteColor];
+  //  [self.view addSubview:speechBubble];
 }
 
 
