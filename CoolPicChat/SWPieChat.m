@@ -10,7 +10,7 @@
 @implementation SWPieChatRationLayer
 @end
 
-@interface SWPieChat()
+@interface SWPieChat()<CAAnimationDelegate>
 @property(nonatomic, strong) NSArray *proportions;
 @property(nonatomic, strong) NSArray *placeHolderColors;
 @property(nonatomic, strong) NSArray *placeHolderTitles;
@@ -40,10 +40,6 @@
     [path appendPath:outPath];
     [[UIColor lightGrayColor] set];
     [path fill];
-    
-    
-    
-    
     
     
     // 根据proportions填充饼图
@@ -118,21 +114,6 @@
     ringLayer.opacity = 0.2f;
     [self.layer addSublayer:ringLayer];
     
-   // UIPanGestureRecognizer *panCR = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAct:)];
-   // [self addGestureRecognizer:panCR];
-//    NSString *drawText = @"测试内容";
-//    UIFont *font = [UIFont systemFontOfSize:16.0f];
-//   // font.
-//    [drawText drawInRect:CGRectMake(p1.x, p1.y, pointerWidth - 10, pointerHeight - 10) withAttributes:@{NSFontAttributeName:font, NSForegroundColorAttributeName:[UIColor blueColor]}];
-    
-//    // 添加mask layer
-//    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-//    maskLayer.path = insidePath.CGPath;
-//    maskLayer.strokeEnd = 0;
-//    maskLayer.strokeColor = [UIColor redColor].CGColor;
-//    maskLayer.lineWidth =  2*radius;
-//    maskLayer.fillColor = [UIColor clearColor].CGColor;
-//   // bkLayer.mask = maskLayer;
 //
 //    // 添加动画
 //    // 动画1 旋转动画
@@ -145,21 +126,33 @@
 //    rotateAnimation.cumulative = YES;
 //    rotateAnimation.repeatCount = MAXFLOAT;
 //
-//    // 动画2 逐步显示动画
-//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-//    animation.duration = 1.5f;
-//    animation.fromValue = @0;
-//    animation.toValue = @1;
-//    // 自动还原
-//    animation.autoreverses = NO;
-//    // 结束后是否移除
-//    animation.removedOnCompletion = NO;
-//    // 让动画保持在最后状态
-//    animation.fillMode = kCAFillModeForwards;
-//    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//   // [maskLayer addAnimation:animation forKey:@"strokeEnd"];
 //
-//   // [bkLayer addAnimation:rotateAnimation forKey:@"aa"];
+    // [bkLayer addAnimation:rotateAnimation forKey:@"aa"];
+    
+    // 动画2 逐步显示动画
+    // 添加mask layer
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.path = backgroundLayerPath.CGPath;
+    maskLayer.strokeEnd = 0;
+    maskLayer.strokeColor = [UIColor redColor].CGColor;
+    maskLayer.lineWidth =  2*radius;
+    maskLayer.fillColor = [UIColor clearColor].CGColor;
+    bkLayer.mask = maskLayer;
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    animation.duration = 1.5f;
+    animation.fromValue = @0;
+    animation.toValue = @1;
+    // 自动还原
+    animation.autoreverses = NO;
+    // 结束后是否移除
+    animation.removedOnCompletion = NO;
+    animation.delegate = self;
+    // 让动画保持在最后状态
+    animation.fillMode = kCAFillModeForwards;
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [animation setValue:@"strokeEnd" forKey:@"AnimationKey"];
+    [maskLayer addAnimation:animation forKey:@"strokeEnd"];
+    
 }
 - (void)updateProportions:(NSArray *)proportions placeHolderColor:(NSArray *)placeHolderColors placeHolderTitles:(NSArray *)placeHolderTitles {
     self.proportions = proportions;
@@ -224,6 +217,16 @@
         if (CGPathContainsPoint(layer.shapeLayer.path, nil, testPoint, false)) {
             CGFloat slideAngel = M_PI_2 - layer.centerAngel;
             self.bkLayer.affineTransform = CGAffineTransformRotate(CGAffineTransformIdentity, slideAngel);
+        }
+    }
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
+    if(flag) {
+        if ([[anim valueForKey:@"AnimationKey"] isEqualToString:@"strokeEnd"]) {
+            // 移除动画
+            self.bkLayer.mask = nil;
+            [self.bkLayer removeAnimationForKey:@"strokeEnd"];
         }
     }
 }
