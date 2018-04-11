@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B0333336207B0CAD007900FF /* SWSpeechBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = B0333335207B0CAD007900FF /* SWSpeechBubble.m */; };
-		B0333339207B1071007900FF /* SWButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B0333338207B1070007900FF /* SWButton.m */; };
 		B03456092068EDD000495035 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B03456082068EDD000495035 /* AppDelegate.m */; };
 		B034560C2068EDD000495035 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B034560B2068EDD000495035 /* ViewController.m */; };
 		B034560F2068EDD000495035 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B034560D2068EDD000495035 /* Main.storyboard */; };
@@ -21,8 +20,6 @@
 /* Begin PBXFileReference section */
 		B0333334207B0CAD007900FF /* SWSpeechBubble.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SWSpeechBubble.h; sourceTree = "<group>"; };
 		B0333335207B0CAD007900FF /* SWSpeechBubble.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SWSpeechBubble.m; sourceTree = "<group>"; };
-		B0333337207B1070007900FF /* SWButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWButton.h; sourceTree = "<group>"; };
-		B0333338207B1070007900FF /* SWButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWButton.m; sourceTree = "<group>"; };
 		B03456042068EDD000495035 /* CoolPicChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoolPicChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B03456072068EDD000495035 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B03456082068EDD000495035 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -67,8 +64,6 @@
 		B03456062068EDD000495035 /* CoolPicChat */ = {
 			isa = PBXGroup;
 			children = (
-				B0333337207B1070007900FF /* SWButton.h */,
-				B0333338207B1070007900FF /* SWButton.m */,
 				B03456072068EDD000495035 /* AppDelegate.h */,
 				B03456082068EDD000495035 /* AppDelegate.m */,
 				B034560A2068EDD000495035 /* ViewController.h */,
@@ -161,7 +156,6 @@
 				B034560C2068EDD000495035 /* ViewController.m in Sources */,
 				B03456172068EDD000495035 /* main.m in Sources */,
 				B0333336207B0CAD007900FF /* SWSpeechBubble.m in Sources */,
-				B0333339207B1071007900FF /* SWButton.m in Sources */,
 				B034561F2068EDEE00495035 /* SWPieChat.m in Sources */,
 				B03456092068EDD000495035 /* AppDelegate.m in Sources */,
 			);
