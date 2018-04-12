@@ -7,26 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
-@interface SWPieChatRationLayer : NSObject
-@property(nonatomic, strong) CAShapeLayer *shapeLayer;
-@property(nonatomic, assign) CGFloat centerAngel;
-@property(nonatomic, strong) NSString *indentity;
-@property(nonatomic, strong) NSNumber *ratio;
-@property(nonatomic, strong) NSString *title;
-@property(nonatomic, strong) UIColor *color;
-@end
-
 @interface SWPieChatSegment : NSObject
+- (instancetype)initWithValue:(CGFloat)value title:(NSString *)title color:(UIColor *)color;
+
 @property(nonatomic, strong) UIColor *segmentColor;
 @property(nonatomic, strong) NSString *segmentTitle;
-@property(nonatomic, assign) CGFloat segmentRatio;
+@property(nonatomic, assign) CGFloat segmentValue;
+@end
+
+@class SWPieChat;
+@protocol SWPieChatDelegate<NSObject>
+@optional
+- (void)pieChatDidShow:(SWPieChat *)pieChat defaultSegment:(SWPieChatSegment *)pieChatSegment;
+- (void)pieChat:(SWPieChat *)pieChat didSelectSegment:(SWPieChatSegment *)pieChatSegment;
 @end
 
 @interface SWPieChat : UIView
-- (void)updateProportions:(NSArray *)proportions placeHolderColor:(NSArray *)placeHolderColors placeHolderTitles:(NSArray *)placeHolderTitles;
+@property(nonatomic, weak) id<SWPieChatDelegate> delegate;
+- (void)updateProportions:(NSArray<SWPieChatSegment *>*)proportions;
 @end
 
-@protocol SWPieChatDelegate<NSObject>
-- (void)pieChatDidShow:(SWPieChat *)pieChat;
-- (void)pieChat:(SWPieChat *)pieChat didSelectSegment:(SWPieChatSegment *)pieChatSegment;
-@end
+

@@ -7,29 +7,33 @@
 //
 
 #import "SWPieChat.h"
-@implementation SWPieChatRationLayer
+@interface SWPieChatSegment()
+@property(nonatomic, assign) CGFloat centerAngle;
+@property(nonatomic, strong) CAShapeLayer *segmentLayer;
+@property(nonatomic, assign) CGFloat segmentRatio;
 @end
 
+@implementation SWPieChatSegment
+- (instancetype)initWithValue:(CGFloat)value title:(NSString *)title color:(UIColor *)color {
+    if (self = [super init]) {
+        _segmentValue = value;
+        _segmentTitle = title;
+        _segmentColor = color;
+    }
+    return self;
+}
+@end
+
+
 @interface SWPieChat()<CAAnimationDelegate>
-@property(nonatomic, strong) NSArray *proportions;
-@property(nonatomic, strong) NSArray *placeHolderColors;
-@property(nonatomic, strong) NSArray *placeHolderTitles;
+@property(nonatomic, strong) NSArray<SWPieChatSegment *> *proportions;
 @property(nonatomic, strong) CALayer *bkLayer;
-@property(nonatomic, strong) CAShapeLayer *firstLayer;
 @property(nonatomic, assign) CGPoint pieCenter;
-@property(nonatomic, assign) CGFloat radius;
-@property(nonatomic, assign) CGFloat midAngle;
-@property(nonatomic, strong) NSMutableArray<SWPieChatRationLayer *> *pieRatioLayerArray;
+@property(nonatomic, assign) CGFloat totalCount;
 @end
 
 
 @implementation SWPieChat
-- (NSMutableArray *)pieRatioLayerArray {
-    if (_pieRatioLayerArray == nil) {
-        _pieRatioLayerArray = [[NSMutableArray alloc] init];
-    }
-    return _pieRatioLayerArray;
-}
 
 - (void)drawRect:(CGRect)rect {
     // 绘制圆环背景
@@ -41,12 +45,10 @@
     [[UIColor lightGrayColor] set];
     [path fill];
     
-    
     // 根据proportions填充饼图
     CGFloat startAngle = -M_PI_2;
     CGFloat totalAngel = 2 * M_PI;
     CGFloat radius = (sideLength - 15)/2;
-    _radius = radius;
     CGPoint pieCenter = CGPointMake(CGRectGetMidX(outRect), CGRectGetMidY(outRect));
     self.pieCenter = pieCenter;
     UIBezierPath *backgroundLayerPath = [UIBezierPath bezierPathWithArcCenter:CGPointZero radius:radius startAngle:startAngle endAngle:totalAngel clockwise:YES];
@@ -59,28 +61,22 @@
     self.bkLayer = bkLayer;
     
    
-    NSInteger index = 0;
-    for (NSNumber *ratio in self.proportions) {
+    for (SWPieChatSegment *segment in self.proportions) {
         UIBezierPath *path = [UIBezierPath bezierPath];
         [path moveToPoint:CGPointZero];
-        [path addArcWithCenter:CGPointZero radius:radius startAngle:startAngle endAngle:startAngle + ratio.floatValue * totalAngel clockwise:YES];
+        [path addArcWithCenter:CGPointZero radius:radius startAngle:startAngle endAngle:startAngle + segment.segmentRatio * totalAngel clockwise:YES];
         [path closePath];
         CAShapeLayer *newLayer = [[CAShapeLayer alloc] init];
-        newLayer.fillColor = ((UIColor *)(self.placeHolderColors[index])).CGColor;
+        newLayer.fillColor = segment.segmentColor.CGColor;
         newLayer.path = path.CGPath;
         [bkLayer addSublayer:newLayer];
         
-        SWPieChatRationLayer *ratioLayer = [[SWPieChatRationLayer alloc] init];
-        ratioLayer.shapeLayer = newLayer;
-        ratioLayer.ratio = ratio;
-        ratioLayer.color = self.placeHolderColors[index];
-        ratioLayer.centerAngel = startAngle + (ratio.floatValue * totalAngel)/2;
-        ratioLayer.indentity = [NSString stringWithFormat:@"%ld", index];
-        [self.pieRatioLayerArray addObject:ratioLayer];
-        
-        startAngle += ratio.floatValue * totalAngel;
-        ++index;
+        segment.segmentLayer = newLayer;
+        segment.centerAngle = startAngle + (segment.segmentRatio * totalAngel)/2;
+        startAngle += segment.segmentRatio * totalAngel;
     }
+    
+    
 
     // 添加总额的圆圈
     CALayer *countBackgourLayer = [CALayer layer];
@@ -93,10 +89,11 @@
     
     
     CATextLayer *countTextLayer = [CATextLayer layer];
-    countTextLayer.bounds = CGRectMake(0, 0, 50, 36);
+    countTextLayer.bounds = CGRectMake(0, 0, 100, 36);
     countTextLayer.position = pieCenter;
     countTextLayer.contentsScale = [UIScreen mainScreen].scale;
-    countTextLayer.string = @"总计\n123.23";
+    NSString *totalValueStr = [NSString stringWithFormat:@"%.2f", self.totalCount];
+    countTextLayer.string = [NSString stringWithFormat:@"总计\n%@", totalValueStr];
     countTextLayer.fontSize = 15;
     countTextLayer.foregroundColor = [UIColor whiteColor].CGColor;
     countTextLayer.alignmentMode = kCAAlignmentCenter;
@@ -114,22 +111,8 @@
     ringLayer.opacity = 0.2f;
     [self.layer addSublayer:ringLayer];
     
-//
-//    // 添加动画
-//    // 动画1 旋转动画
-//    CABasicAnimation *rotateAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-//    rotateAnimation.duration = 3.0f;
-//    rotateAnimation.fromValue = @0;
-//    rotateAnimation.toValue = @(M_PI);
-//    rotateAnimation.autoreverses = NO;
-//    rotateAnimation.removedOnCompletion = NO;
-//    rotateAnimation.cumulative = YES;
-//    rotateAnimation.repeatCount = MAXFLOAT;
-//
-//
-    // [bkLayer addAnimation:rotateAnimation forKey:@"aa"];
     
-    // 动画2 逐步显示动画
+    //  逐步显示动画
     // 添加mask layer
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.path = backgroundLayerPath.CGPath;
@@ -139,7 +122,7 @@
     maskLayer.fillColor = [UIColor clearColor].CGColor;
     bkLayer.mask = maskLayer;
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    animation.duration = 1.5f;
+    animation.duration = 1.0f;
     animation.fromValue = @0;
     animation.toValue = @1;
     // 自动还原
@@ -154,23 +137,24 @@
     [maskLayer addAnimation:animation forKey:@"strokeEnd"];
     
 }
-- (void)updateProportions:(NSArray *)proportions placeHolderColor:(NSArray *)placeHolderColors placeHolderTitles:(NSArray *)placeHolderTitles {
+#pragma mark - Public interface / Update UI
+- (void)updateProportions:(NSArray<SWPieChatSegment *>*)proportions {
     self.proportions = proportions;
-    self.placeHolderColors = placeHolderColors;
-    self.placeHolderTitles = placeHolderTitles;
-    [self setNeedsLayout];
+    
+    for (SWPieChatSegment *segment in proportions) {
+        self.totalCount += segment.segmentValue;
+    }
+    
+    for (SWPieChatSegment *segment in proportions) {
+        segment.segmentRatio = segment.segmentValue / self.totalCount;
+    }
+    
+    if (self.proportions) {
+        [self setNeedsDisplay];
+    }
 }
 
 #pragma mark - Gesture Recognizer
-//- (void)rotationAct:(UIRotationGestureRecognizer *)gesture {
-//    self.bkLayer.affineTransform = CGAffineTransformMakeRotation(gesture.rotation);
-//}
-//- (void)panAct:(UIPanGestureRecognizer *)panGR {
-//    CGPoint trans = [panGR translationInView:self];
-//    CGFloat transUnit = M_PI / 50;
-//    self.bkLayer.affineTransform = CGAffineTransformMakeRotation(-(transUnit * trans.x));
-//}
-
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
    
        UITouch *touch = [touches anyObject];
@@ -213,10 +197,14 @@
     CGAffineTransform layerTransform = CGAffineTransformInvert(self.bkLayer.affineTransform);
     // 根据当前的变换矩阵，反向变换 testPoint，使得testPoint仍然在初始坐标系下的(0, 20)点
     CGPoint testPoint = CGPointApplyAffineTransform(CGPointMake(0, 20), layerTransform);
-    for (SWPieChatRationLayer *layer in  self.pieRatioLayerArray) {
-        if (CGPathContainsPoint(layer.shapeLayer.path, nil, testPoint, false)) {
-            CGFloat slideAngel = M_PI_2 - layer.centerAngel;
+    for (SWPieChatSegment *segment in  self.proportions) {
+        if (CGPathContainsPoint(segment.segmentLayer.path, nil, testPoint, false)) {
+            CGFloat slideAngel = M_PI_2 - segment.centerAngle;
             self.bkLayer.affineTransform = CGAffineTransformRotate(CGAffineTransformIdentity, slideAngel);
+        
+            if ([self.delegate respondsToSelector:@selector(pieChat:didSelectSegment:)]) {
+                [self.delegate pieChat:self didSelectSegment:segment];
+            }
         }
     }
 }
@@ -227,6 +215,27 @@
             // 移除动画
             self.bkLayer.mask = nil;
             [self.bkLayer removeAnimationForKey:@"strokeEnd"];
+            
+            // 将重心旋转到比例最大的segment
+            SWPieChatSegment *maxRatioSegment = self.proportions.firstObject;
+            for (SWPieChatSegment *segment in self.proportions) {
+                if (maxRatioSegment.segmentRatio < segment.segmentRatio) {
+                    maxRatioSegment = segment;
+                }
+            }
+            // 这里延迟执行一下，不然会有残影
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                CGFloat slideAngel = M_PI_2 - maxRatioSegment.centerAngle;
+                self.bkLayer.affineTransform = CGAffineTransformRotate(CGAffineTransformIdentity, slideAngel);
+                
+                // 通知deleaget 完成了显示
+                if (self.delegate) {
+                    if ([self.delegate respondsToSelector:@selector(pieChatDidShow:defaultSegment:)]) {
+                        [self.delegate pieChatDidShow:self defaultSegment:maxRatioSegment];
+                    }
+                }
+            });
+          
         }
     }
 }
