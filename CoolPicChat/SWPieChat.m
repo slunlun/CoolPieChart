@@ -10,7 +10,6 @@
 @interface SWPieChatSegment()
 @property(nonatomic, assign) CGFloat centerAngle;
 @property(nonatomic, strong) CAShapeLayer *segmentLayer;
-@property(nonatomic, assign) CGFloat segmentRatio;
 @end
 
 @implementation SWPieChatSegment
@@ -38,7 +37,7 @@
 - (void)drawRect:(CGRect)rect {
     // 绘制圆环背景
     CGFloat sideLength = MIN(self.bounds.size.width, self.bounds.size.height);
-    CGRect outRect = CGRectMake(5, 5, sideLength - 5, sideLength - 5);
+    CGRect outRect = CGRectMake(5, 5, sideLength - 10, sideLength - 10);
     UIBezierPath *path = [UIBezierPath bezierPath];
     UIBezierPath *outPath = [UIBezierPath bezierPathWithOvalInRect:outRect];
     [path appendPath:outPath];
@@ -48,7 +47,7 @@
     // 根据proportions填充饼图
     CGFloat startAngle = -M_PI_2;
     CGFloat totalAngel = 2 * M_PI;
-    CGFloat radius = (sideLength - 15)/2;
+    CGFloat radius = (sideLength - 25)/2;
     CGPoint pieCenter = CGPointMake(CGRectGetMidX(outRect), CGRectGetMidY(outRect));
     self.pieCenter = pieCenter;
     UIBezierPath *backgroundLayerPath = [UIBezierPath bezierPathWithArcCenter:CGPointZero radius:radius startAngle:startAngle endAngle:totalAngel clockwise:YES];

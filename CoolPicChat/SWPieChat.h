@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 @interface SWPieChatSegment : NSObject
 - (instancetype)initWithValue:(CGFloat)value title:(NSString *)title color:(UIColor *)color;
-
 @property(nonatomic, strong) UIColor *segmentColor;
 @property(nonatomic, strong) NSString *segmentTitle;
 @property(nonatomic, assign) CGFloat segmentValue;
+@property(nonatomic, assign) CGFloat segmentRatio;
 @end
 
 @class SWPieChat;

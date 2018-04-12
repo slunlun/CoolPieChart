@@ -10,4 +10,5 @@
 
 @interface SWSpeechBubble : UIView
 @property(nonatomic, strong) UILabel *speechContentLab;
+@property(nonatomic, strong) UILabel *speechTitleLab;
 @end
